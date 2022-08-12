@@ -67,7 +67,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
-
+// 测试使用
 /**
  * {@link org.springframework.beans.factory.config.BeanPostProcessor BeanPostProcessor}
  * implementation that autowires annotated fields, setter methods, and arbitrary
@@ -479,7 +479,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 		// Fall back to class name as cache key, for backwards compatibility with custom callers.
 		String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
 		// Quick check on the concurrent map first, with minimal locking.
-		InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
+		InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey); // 所有注入点的缓存 (注入点 即 类中加了@Autowired 注解的 属性或方法)
 		if (InjectionMetadata.needsRefresh(metadata, clazz)) {
 			synchronized (this.injectionMetadataCache) {
 				metadata = this.injectionMetadataCache.get(cacheKey);
@@ -487,7 +487,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
-					// 解析注入点并缓存
+					// 解析注入点并缓存 (注入点 即 类中加了@Autowired 注解的 属性或方法)
 					metadata = buildAutowiringMetadata(clazz);
 					this.injectionMetadataCache.put(cacheKey, metadata);
 				}
