@@ -873,6 +873,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 	@Override
 	public BeanDefinition getBeanDefinition(String beanName) throws NoSuchBeanDefinitionException {
+		// 根据beanName 从 beanDefinitionMap中获取当前的的BeanDefinition
 		BeanDefinition bd = this.beanDefinitionMap.get(beanName);
 		if (bd == null) {
 			if (logger.isTraceEnabled()) {
@@ -933,6 +934,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// 所有扫描到的BeanDefinition的name
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
@@ -940,7 +942,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			// 获取合并后的BeanDefinition
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 
+			// 判断当前的BeanDefinition 是否为,非抽象,单例,非懒加载的BeanDefinition(注意抽象类是无法生成BeanDefinition的。此处指抽象的BeanDefinition，可通过<bean/>标签创建，设置abstract = true 设置，可用于父子BeanDefinition)
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+				// 判断是不是 FactoryBean
 				if (isFactoryBean(beanName)) {
 					// 获取FactoryBean对象
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);

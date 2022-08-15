@@ -217,6 +217,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "Bean name must not be null");
 		synchronized (this.singletonObjects) {
+			// 判断单例池中是否存在该单例 Bean
 			Object singletonObject = this.singletonObjects.get(beanName);
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
@@ -234,6 +235,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					// 执行传过来的 lambda 表达式,即调用createBean(),创建 bean
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}
@@ -384,6 +386,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param bean the bean instance
 	 */
 	public void registerDisposableBean(String beanName, DisposableBean bean) {
+		// 所有具有销毁逻辑的 Bean , 放在专门的Map中
 		synchronized (this.disposableBeans) {
 			this.disposableBeans.put(beanName, bean);
 		}
@@ -418,6 +421,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	public void registerDependentBean(String beanName, String dependentBeanName) {
 		String canonicalName = canonicalName(beanName);
 
+		// this.dependentBeanMap 某个Bean被哪些Bean依赖了
 		synchronized (this.dependentBeanMap) {
 			Set<String> dependentBeans =
 					this.dependentBeanMap.computeIfAbsent(canonicalName, k -> new LinkedHashSet<>(8));

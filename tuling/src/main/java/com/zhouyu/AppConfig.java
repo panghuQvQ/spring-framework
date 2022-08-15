@@ -1,11 +1,19 @@
 package com.zhouyu;
 
 
+import com.zhouyu.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.*;
 
 
 @ComponentScan("com.zhouyu")
 public class AppConfig {
+
+	// 测试 通过 byName 实现依赖注入
+	@Bean(autowire = Autowire.BY_NAME)
+	public StudentService studentService(){
+		return new StudentService();
+	}
 
 //	@Bean
 //	public JdbcTemplate jdbcTemplate() {

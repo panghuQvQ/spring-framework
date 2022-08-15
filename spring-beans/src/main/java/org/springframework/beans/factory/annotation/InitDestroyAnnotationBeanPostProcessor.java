@@ -48,7 +48,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.PostConstruct;
 
 /**
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
@@ -194,6 +193,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 
 	@Override
 	public boolean requiresDestruction(Object bean) {
+		// 判断当前bean 的方法上，是否加有 @PreDestroy 注解
 		return findLifecycleMetadata(bean.getClass()).hasDestroyMethods();
 	}
 

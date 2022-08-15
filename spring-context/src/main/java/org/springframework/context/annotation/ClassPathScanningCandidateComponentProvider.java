@@ -312,10 +312,12 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @return a corresponding Set of autodetected bean definitions
 	 */
 	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
+		// 如果在resources-->META-INF-->spring.components下配置了数据,则只会扫描该文件里说明的类
 		if (this.componentsIndex != null && indexSupportsIncludeFilters()) {
 			return addCandidateComponentsFromIndex(this.componentsIndex, basePackage);
 		}
 		else {
+			// 扫描出所有符合条件的BeanDefinition,包含@Component()注解,条件判断@Conditional()符合条件,BeanDefinition是否为接口或抽象类
 			return scanCandidateComponents(basePackage);
 		}
 	}
@@ -423,6 +425,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 			// 获取basePackage下所有的文件资源
 			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
 					resolveBasePackage(basePackage) + '/' + this.resourcePattern;
+			// ResourcePatternResolver: 资源加载器，可以一次性获取多个资源（文件资源等等）
 			Resource[] resources = getResourcePatternResolver().getResources(packageSearchPath);
 			boolean traceEnabled = logger.isTraceEnabled();
 			boolean debugEnabled = logger.isDebugEnabled();
@@ -432,12 +435,14 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				}
 				if (resource.isReadable()) {
 					try {
+						// MetadataReader表示类的元数据读取器,默认实现类为SimpleMetadataReader.
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
 						// excludeFilters、includeFilters判断
 						if (isCandidateComponent(metadataReader)) { // @Component-->includeFilters判断
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setSource(resource);
 
+							// 判断当前BeanDefinition的类信息,是否为接口,抽象类
 							if (isCandidateComponent(sbd)) {
 								if (debugEnabled) {
 									logger.debug("Identified candidate component class: " + resource);
@@ -494,12 +499,15 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @return whether the class qualifies as a candidate component
 	 */
 	protected boolean isCandidateComponent(MetadataReader metadataReader) throws IOException {
+		// ExcludeFilter表示排除过滤器,当没有添加排除过滤器时,默认只有一个排除过滤器，即new AnnotationConfigApplicationContext(AppConfig.class);中的AppConfig.class
 		for (TypeFilter tf : this.excludeFilters) {
+			// 检查当前扫描到的Bean含有任何一个指定的注解标记
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				return false;
 			}
 		}
 
+		// IncludeFilter表示包含过滤器。
 		// 符合includeFilters的会进行条件匹配，通过了才是Bean，也就是先看有没有@Component，再看是否符合@Conditional
 		for (TypeFilter tf : this.includeFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
@@ -516,6 +524,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @return whether the class qualifies as a candidate component
 	 */
 	private boolean isConditionMatch(MetadataReader metadataReader) {
+		// ConditionEvaluator 条件评估器
 		if (this.conditionEvaluator == null) {
 			this.conditionEvaluator =
 					new ConditionEvaluator(getRegistry(), this.environment, this.resourcePatternResolver);

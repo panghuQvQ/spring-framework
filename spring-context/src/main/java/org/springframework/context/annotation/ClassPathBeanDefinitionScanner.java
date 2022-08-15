@@ -244,6 +244,8 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @return number of beans registered
 	 */
 	public int scan(String... basePackages) {
+		// BeanDefinitionRegistry: 可以注册、保存、移除、获取某个BeanDefinition
+		// 获取扫描之前,当前容器有多少个Bean
 		int beanCountAtScanStart = this.registry.getBeanDefinitionCount();
 
 		doScan(basePackages);
@@ -253,6 +255,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 			AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 		}
 
+		// 计算获取,本次扫描获取的Bean数量
 		return (this.registry.getBeanDefinitionCount() - beanCountAtScanStart);
 	}
 
@@ -266,18 +269,23 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 */
 	protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
-		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
+ 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
 		for (String basePackage : basePackages) {
-
+			// findCandidateComponents() 查找候选组件.经过扫描筛选后，符合创建Bean的信息
+			// candidates 中的 BeanDefinition 目前是不完整的，只有简单的信息(beanClass,资源信息)
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 
+			// 循环candidates, 完善 BeanDefinition 数据
 			for (BeanDefinition candidate : candidates) {
+				// 获取当前BeanDefinition中的 scopeMetadata,用于获取类的scope数据,后续可用于判断是生成单例Bean,还是原型Bean
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
 
+				// 获取BeanName，如果@Component("xxx")有数据,则用xxx ;如果没有,则用类名,首字母小写;如果类名前两个都大写,则直接用,例如ABTest
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
 
 				if (candidate instanceof AbstractBeanDefinition) {
+					// 设置默认值,比如初始化方法...
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
@@ -285,14 +293,14 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
 
-				// 检查Spring容器中是否已经存在该beanName
+				// 检查Spring容器中是否已经存在该beanName。此时(单独)扫描的时候,不同类型且beanName重复就会抛异常
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 					beanDefinitions.add(definitionHolder);
 
-					// 注册
+					// 注册BeanDefinition 至 BeanDefinitionMap中
 					registerBeanDefinition(definitionHolder, this.registry);
 				}
 			}
@@ -307,7 +315,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @param beanName the generated bean name for the given bean
 	 */
 	protected void postProcessBeanDefinition(AbstractBeanDefinition beanDefinition, String beanName) {
-		// 设置BeanDefinition的默认值
+		// 设置BeanDefinition的默认值,例如初始化方法，摧毁方法
 		beanDefinition.applyDefaults(this.beanDefinitionDefaults);
 
 		// AutowireCandidate表示某个Bean能否被用来做依赖注入
