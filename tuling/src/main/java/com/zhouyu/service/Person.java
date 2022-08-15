@@ -1,7 +1,6 @@
 package com.zhouyu.service;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.SmartFactoryBean;
 import org.springframework.stereotype.Component;
 
 /**
