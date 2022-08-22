@@ -568,6 +568,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	@Nullable
 	private MergedAnnotation<?> findAutowiredAnnotation(AccessibleObject ao) {
+		// AccessibleObject 翻译：可访问的对象
  		MergedAnnotations annotations = MergedAnnotations.from(ao);
 		// this.autowiredAnnotationTypes 值为：@Autowired、@Value、@Inject 注解
 		for (Class<? extends Annotation> type : this.autowiredAnnotationTypes) {
