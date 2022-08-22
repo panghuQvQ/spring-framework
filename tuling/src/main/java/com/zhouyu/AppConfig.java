@@ -4,9 +4,11 @@ package com.zhouyu;
 import com.zhouyu.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 
 @ComponentScan("com.zhouyu")
+@PropertySource("spring.properties") // 引用properties文件，后续可用 @Value("$(zhouyu)")
 public class AppConfig {
 
 	// 测试 通过 byName 实现依赖注入

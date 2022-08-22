@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @author 周瑜
  */
 @Component
-@Scope("prototype")
+//@Scope("prototype")
 public class UserService {
 
 	public void test() {

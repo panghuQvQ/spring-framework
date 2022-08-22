@@ -118,6 +118,10 @@ public class InjectionMetadata {
 		if (!elementsToIterate.isEmpty()) {
 			// 遍历每个注入点进行依赖注入
 			for (InjectedElement element : elementsToIterate) {
+				/**
+				 * 如果直接点进去，是处理 @Resource 注解的
+				 * @Autowired 注解的处理方法 是看对应子类的inject()方法， 子类: AutowiredFieldElement/ AutowiredMethodElement
+				 */
 				element.inject(target, beanName, pvs);
 			}
 		}

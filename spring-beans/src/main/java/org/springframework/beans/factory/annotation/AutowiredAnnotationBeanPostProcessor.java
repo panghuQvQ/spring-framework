@@ -432,6 +432,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 		// 找注入点（所有被@Autowired注解了的Field或Method）
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
 		try {
+			// 根据注入点，进行注入
 			metadata.inject(bean, beanName, pvs);
 		}
 		catch (BeanCreationException ex) {
@@ -487,7 +488,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
-					// 解析注入点并缓存 (注入点 即 类中加了@Autowired 注解的 属性或方法)
+					// 解析注入点并缓存 (注入点 即 当前类中加了@Autowired 注解的 属性或方法)
 					metadata = buildAutowiringMetadata(clazz);
 					this.injectionMetadataCache.put(cacheKey, metadata);
 				}
@@ -521,9 +522,9 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 						return;
 					}
 
-					// 构造注入点
+					// 构造注入点,判断是不是必需的,根据 @Autowired(required = true), 默认为true
 					boolean required = determineRequiredStatus(ann);
-					currElements.add(new AutowiredFieldElement(field, required));
+					currElements.add(new AutowiredFieldElement(field, required)); // 添加到 注入点 集合中
 				}
 			});
 
@@ -567,7 +568,8 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	@Nullable
 	private MergedAnnotation<?> findAutowiredAnnotation(AccessibleObject ao) {
-		MergedAnnotations annotations = MergedAnnotations.from(ao);
+ 		MergedAnnotations annotations = MergedAnnotations.from(ao);
+		// this.autowiredAnnotationTypes 值为：@Autowired、@Value、@Inject 注解
 		for (Class<? extends Annotation> type : this.autowiredAnnotationTypes) {
 			MergedAnnotation<?> annotation = annotations.get(type);
 			if (annotation.isPresent()) {
@@ -712,6 +714,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			TypeConverter typeConverter = beanFactory.getTypeConverter();
 			Object value;
 			try {
+				// 核心方法
 				value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 			}
 			catch (BeansException ex) {
@@ -806,21 +809,23 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 		@Nullable
 		private Object[] resolveMethodArguments(Method method, Object bean, @Nullable String beanName) {
-			int argumentCount = method.getParameterCount();
+			int argumentCount = method.getParameterCount(); // 获取方法中参数的个数
 			Object[] arguments = new Object[argumentCount];
-			DependencyDescriptor[] descriptors = new DependencyDescriptor[argumentCount];
+			DependencyDescriptor[] descriptors = new DependencyDescriptor[argumentCount]; // 方法里有几个参数，就会生成几个依赖描述器
 			Set<String> autowiredBeans = new LinkedHashSet<>(argumentCount);
 			Assert.state(beanFactory != null, "No BeanFactory available");
 			TypeConverter typeConverter = beanFactory.getTypeConverter();
 
 			// 遍历每个方法参数，找到匹配的bean对象
 			for (int i = 0; i < arguments.length; i++) {
-				MethodParameter methodParam = new MethodParameter(method, i);
+				MethodParameter methodParam = new MethodParameter(method, i); // 方法参数
 
 				DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, this.required);
 				currDesc.setContainingClass(bean.getClass());
 				descriptors[i] = currDesc;
 				try {
+
+					// 此处为实现核心，从Bean工厂中获取bean
 					Object arg = beanFactory.resolveDependency(currDesc, beanName, autowiredBeans, typeConverter);
 					if (arg == null && !this.required) {
 						arguments = null;
