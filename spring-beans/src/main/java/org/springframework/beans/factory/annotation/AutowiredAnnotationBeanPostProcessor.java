@@ -243,7 +243,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-		InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null);
+		InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null); // 找出注入点并缓存 (注入点 即 当前类中加了@Autowired,@Value 注解的 属性或方法)
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -429,7 +429,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
-		// 找注入点（所有被@Autowired注解了的Field或Method）
+		// 找注入点（所有被@Autowired,@Value注解了的Field或Method）
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, bean.getClass(), pvs);
 		try {
 			// 根据注入点，进行注入
@@ -715,7 +715,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			TypeConverter typeConverter = beanFactory.getTypeConverter();
 			Object value;
 			try {
-				// 核心方法
+				// ☆ 核心方法,该方法会根据该依赖描述从BeanFactory中找出对应的唯一的一个Bean对象。
 				value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 			}
 			catch (BeansException ex) {

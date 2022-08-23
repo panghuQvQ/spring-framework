@@ -11,7 +11,7 @@ public class Test {
 //		userService.test();
 
 //		System.out.println(applicationContext.getBean("userService"));
-		System.out.println(applicationContext.getBean("&person"));
+//		System.out.println(applicationContext.getBean("&person"));
 
 //		applicationContext.close();
 	}

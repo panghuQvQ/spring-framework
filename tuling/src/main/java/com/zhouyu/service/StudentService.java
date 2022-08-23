@@ -1,5 +1,6 @@
 package com.zhouyu.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,6 +10,9 @@ import org.springframework.stereotype.Service;
 public class StudentService {
 
 	private User user;
+
+//	@Autowired
+//	private Person person;
 
 	public void test() {
 

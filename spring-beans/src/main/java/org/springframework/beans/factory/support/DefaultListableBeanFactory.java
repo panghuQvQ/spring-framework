@@ -551,6 +551,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		if (resolvedBeanNames != null) {
 			return resolvedBeanNames;
 		}
+		// 遍历 beanDefinitionNames，获取当前类型对应的beanName
 		resolvedBeanNames = doGetBeanNamesForType(ResolvableType.forRawClass(type), includeNonSingletons, true);
 		if (ClassUtils.isCacheSafe(type, getBeanClassLoader())) {
 			cache.put(type, resolvedBeanNames);
@@ -1335,7 +1336,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (result == null) {
 				// descriptor表示某个属性或某个set方法
 				// requestingBeanName表示正在进行依赖注入的Bean
-				// 最最核心的代码
+				// ☆☆ 最最核心的代码
 				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter);
 			}
 			return result;
@@ -1386,7 +1387,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 
 			/**
-			 * 找到所有Bean，key是beanName, value有可能是bean对象，有可能是beanClass。
+			 * ☆☆☆ 根据类型找到所有Bean，
+			 * key是beanName, value有可能是bean对象，有可能是beanClass。
 			 * 如果BeanFactory中查询到的当前type对应的对象，即value是bean对象
 			 * 如果没有，即value是 beanClass
 			 * 可进入查看代码
