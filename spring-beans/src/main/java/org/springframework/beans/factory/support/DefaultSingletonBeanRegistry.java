@@ -183,20 +183,22 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// Quick check for existing instance without full singleton lock
 		Object singletonObject = this.singletonObjects.get(beanName);
+		// 判断单例池中是否有这个对象 && 判断当前beanName 对应的bean 是否正在创建
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
-			singletonObject = this.earlySingletonObjects.get(beanName);
+			singletonObject = this.earlySingletonObjects.get(beanName); // 从二级缓存中获取 beanName的原始对象
+			// 如果 二级缓存中不存在 && 判断是否支持循环依赖，默认支持
 			if (singletonObject == null && allowEarlyReference) {
 				synchronized (this.singletonObjects) {
 					// Consistent creation of early reference within full singleton lock
-					singletonObject = this.singletonObjects.get(beanName);
+					singletonObject = this.singletonObjects.get(beanName); // 一级缓存
 					if (singletonObject == null) {
-						singletonObject = this.earlySingletonObjects.get(beanName);
+						singletonObject = this.earlySingletonObjects.get(beanName); // 二级缓存
 						if (singletonObject == null) {
-							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName); // 三级缓存，获取lambda表达式
 							if (singletonFactory != null) {
-								singletonObject = singletonFactory.getObject();
-								this.earlySingletonObjects.put(beanName, singletonObject);
-								this.singletonFactories.remove(beanName);
+								singletonObject = singletonFactory.getObject(); // 执行lambda表达式
+								this.earlySingletonObjects.put(beanName, singletonObject); // 将原始对象或者代理对象，存入二级缓存
+								this.singletonFactories.remove(beanName); // 从三级缓存中，移除当前beanName 数据
 							}
 						}
 					}

@@ -224,6 +224,8 @@ public class InjectionMetadata {
 
 		/**
 		 * Either this or {@link #getResourceToInject} needs to be overridden.
+		 * @Resource 注解 ，的注入方法
+		 * @Resource( name = "xxx",type=xxx.class)
 		 */
 		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs)
 				throws Throwable {
@@ -231,6 +233,7 @@ public class InjectionMetadata {
 			if (this.isField) {
 				Field field = (Field) this.member;
 				ReflectionUtils.makeAccessible(field);
+				// getResourceToInject(target, requestingBeanName) 寻找 bean对象
 				field.set(target, getResourceToInject(target, requestingBeanName));
 			}
 			else {

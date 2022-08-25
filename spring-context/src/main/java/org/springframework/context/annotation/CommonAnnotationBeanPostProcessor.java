@@ -519,6 +519,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			DependencyDescriptor descriptor = element.getDependencyDescriptor();
 
 			// 假设@Resource中没有指定name，并且field的name或setXxx()的xxx不存在对应的bean，那么则根据field类型或方法参数类型从BeanFactory去找
+			// element.isDefaultName, 判断是否为 @Resource 注解 ，如果是 @Resource("xxx") ,则为false
 			if (this.fallbackToDefaultTypeMatch && element.isDefaultName && !factory.containsBean(name)) {
 				autowiredBeanNames = new LinkedHashSet<>();
 				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null); // 先byType，后byName
@@ -657,6 +658,8 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 		@Override
 		protected Object getResourceToInject(Object target, @Nullable String requestingBeanName) {
+			// 如果属性上有@Lazy 注解，则返回一个代理对象，
+			// 反之，getResource() 寻找Bean，并返回
 			return (this.lazyLookup ? buildLazyResourceProxy(this, requestingBeanName) :
 					getResource(this, requestingBeanName));
 		}
