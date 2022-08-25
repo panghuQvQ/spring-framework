@@ -604,8 +604,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// 为了解决循环依赖提前缓存单例创建工厂
-		// Eagerly cache singletons to be able to resolve circular references
-		// even when triggered by lifecycle interfaces like BeanFactoryAware.
+		// 判断是不是单例 && 是否支持循环依赖，默认为true && 是不是正在创建中
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -613,14 +612,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			// 循环依赖-添加到三级缓存
+			/**
+			 * 循环依赖--->通过 addSingletonFactory(),将lamda表达式，添加到三级缓存singletonFactories
+			 * () -> getEarlyBeanReference(beanName, mbd, bean)，后续需要使用的时候才会执行，判断当前bean是否需要进行AOP操作，需要则返回一个代理对象，不需要则返回当前bean原始对象
+ 			 */
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// 属性填充,进去可看到依赖注入的实现
+			// 属性填充,进去可看到 实例化之后，与 依赖注入的实现
 			populateBean(beanName, mbd, instanceWrapper);  //getBean()
 
 			// 初始化，里面包含初始化前，初始化，初始化后
