@@ -8,8 +8,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.weaver.tools.JoinPointMatch;
 import org.springframework.stereotype.Component;
 
-//@Aspect
-//@Component
+@Aspect
+@Component
 public class ZhouyuAspect {
 
 //	@DeclareParents(value = "com.zhouyu.service.UserService", defaultImpl = UserImplement.class)

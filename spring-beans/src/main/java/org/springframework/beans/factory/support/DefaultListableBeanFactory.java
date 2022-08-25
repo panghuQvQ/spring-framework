@@ -1349,7 +1349,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		InjectionPoint previousInjectionPoint = ConstructorResolver.setCurrentInjectionPoint(descriptor);
 		try {
-			// 如果当前descriptor之前做过依赖注入了，则可以直接取shortcut了，相当于缓存
+			// 如果当前descriptor之前做过依赖注入了，则可以直接取shortcut了，相当于缓存，ShortcutDependencyDescriptor.resolveShortcut
 			Object shortcut = descriptor.resolveShortcut(this);
 			if (shortcut != null) {
 				return shortcut;
@@ -1408,7 +1408,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 			if (matchingBeans.size() > 1) { // 寻找到的 bean 大于一个
 				// 根据类型找到了多个Bean，进一步筛选出某一个, @Primary-->优先级最高@Priority()--->name
-				autowiredBeanName = determineAutowireCandidate(matchingBeans, descriptor);
+				autowiredBeanName = determineAutowireCandidate(matchingBeans, descriptor); // 返回的是符合条件的beanName
 				if (autowiredBeanName == null) {
 					if (isRequired(descriptor) || !indicatesMultipleBeans(type)) {
 						return descriptor.resolveNotUnique(descriptor.getResolvableType(), matchingBeans);

@@ -680,7 +680,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 
 			Field field = (Field) this.member;
 			Object value;
-			if (this.cached) {
+			if (this.cached) { // 依赖注入缓存
 				// 对于原型Bean，第一次创建的时候，也找注入点，然后进行注入，此时cached为false，注入完了之后cached为true
 				// 第二次创建的时候，先找注入点（此时会拿到缓存好的注入点），也就是AutowiredFieldElement对象，此时cache为true，也就进到此处了
 				// 注入点内并没有缓存被注入的具体Bean对象，而是beanName，这样就能保证注入到不同的原型Bean对象
@@ -728,7 +728,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 						cachedFieldValue = desc;
 						// 注册一下beanName依赖了autowiredBeanNames，
 						registerDependentBeans(beanName, autowiredBeanNames);
-						if (autowiredBeanNames.size() == 1) {
+						if (autowiredBeanNames.size() == 1) { // autowiredBeanNames 集合,里面存放的是最终筛选到的beanName
 							String autowiredBeanName = autowiredBeanNames.iterator().next();
 							if (beanFactory.containsBean(autowiredBeanName) &&
 									beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {

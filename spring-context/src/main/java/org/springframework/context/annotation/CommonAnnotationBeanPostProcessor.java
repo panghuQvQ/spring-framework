@@ -292,7 +292,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
 		super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName);
-		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null);
+		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null); // 构造注入点的时候，解析@Resource 的name ，type属性
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -521,13 +521,13 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			// 假设@Resource中没有指定name，并且field的name或setXxx()的xxx不存在对应的bean，那么则根据field类型或方法参数类型从BeanFactory去找
 			if (this.fallbackToDefaultTypeMatch && element.isDefaultName && !factory.containsBean(name)) {
 				autowiredBeanNames = new LinkedHashSet<>();
-				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null);
+				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null); // 先byType，后byName
 				if (resource == null) {
 					throw new NoSuchBeanDefinitionException(element.getLookupType(), "No resolvable resource object");
 				}
 			}
 			else {
-				resource = beanFactory.resolveBeanByName(name, descriptor);
+				resource = beanFactory.resolveBeanByName(name, descriptor); // 先byName
 				autowiredBeanNames = Collections.singleton(name);
 			}
 		}
@@ -638,7 +638,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 			// @Resource除开可以指定bean，还可以指定type，type默认为Object
 			if (Object.class != resourceType) {
-				// 如果指定了type，则验证一下和field的类型或set方法的第一个参数类型，是否和所指定的resourceType匹配
+				// 如果指定了type，则验证一下和field的类型或set方法的第一个参数类型，是否和所指定的resourceType匹配，不匹配则抛异常
 				checkResourceType(resourceType);
 			}
 			else {

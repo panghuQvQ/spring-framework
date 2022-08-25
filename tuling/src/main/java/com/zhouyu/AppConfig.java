@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 @ComponentScan("com.zhouyu")
 @PropertySource("spring.properties") // 引用properties文件，后续可用 @Value("$(zhouyu)")
+@EnableAspectJAutoProxy // 开启切面
 public class AppConfig {
 
 	// 测试 通过 byName 实现依赖注入

@@ -1,5 +1,6 @@
-package com.zhouyu.service;
+package com.zhouyu.postProcessor;
 
+import com.zhouyu.service.Person;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
