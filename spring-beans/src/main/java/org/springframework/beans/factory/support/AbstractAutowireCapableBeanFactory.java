@@ -582,7 +582,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 创建Bean实例,里面就包括推断构造方法的实现
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
-		Object bean = instanceWrapper.getWrappedInstance();
+		Object bean = instanceWrapper.getWrappedInstance(); // 获取 bean的原始对象
 		Class<?> beanType = instanceWrapper.getWrappedClass();
 		if (beanType != NullBean.class) {
 			mbd.resolvedTargetType = beanType;
@@ -625,7 +625,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 属性填充,进去可看到 实例化之后，与 依赖注入的实现
 			populateBean(beanName, mbd, instanceWrapper);  //getBean()
 
-			// 初始化，里面包含初始化前，初始化，初始化后
+			/**
+			 * 初始化方法，里面包含初始化前，初始化，初始化后
+			 * 注意！！
+			 * 		如果未经过循环依赖，且bean需要AOP操作时，返回 代理对象
+			 * 		如果经过循环依赖，且bean需要AOP操作时，则返回的是 原始对象，但原则上我们是需要代理对象的，所以下面的代码中操作
+ 			 */
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		} catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -636,10 +641,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 支持循环依赖
 		if (earlySingletonExposure) {
-			Object earlySingletonReference = getSingleton(beanName, false);
+			Object earlySingletonReference = getSingleton(beanName, false); // 内部是从二级缓存中获取对象
 			if (earlySingletonReference != null) {
-				if (exposedObject == bean) {
+				if (exposedObject == bean) { // 判断，初始化后返回的对象 == 推断构造方法返回的对象
 					exposedObject = earlySingletonReference;
 				} else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
 					// beanName被哪些bean依赖了，现在发现beanName所对应的bean对象发生了改变，那么则会报错

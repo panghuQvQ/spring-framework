@@ -235,11 +235,17 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		return null;
 	}
 
+	/**
+	 * 出现循环依赖时调用
+	 * @param bean the raw bean instance
+	 * @param beanName the name of the bean
+	 * @return
+	 */
 	@Override
 	public Object getEarlyBeanReference(Object bean, String beanName) {
 		Object cacheKey = getCacheKey(bean.getClass(), beanName);
-		this.earlyProxyReferences.put(cacheKey, bean);
-		return wrapIfNecessary(bean, beanName, cacheKey); // 此处会判断是否需要 AOP
+			this.earlyProxyReferences.put(cacheKey, bean); // 此处赋值，意味着后续不需要做初始化后方法
+		return wrapIfNecessary(bean, beanName, cacheKey); // 此处与初始化后方法，调用的是同一个，意味着这边进行初始化后操作，后续就不需要做初始化后方法
 	}
 
 	@Override
@@ -285,10 +291,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * identified as one to proxy by the subclass.
 	 * @see #getAdvicesAndAdvisorsForBean
 	 */
+	// 实例化后方法，调用
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			// 意味着之前尚未做过三级缓存中的 lambda表达式方法
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}

@@ -5,11 +5,15 @@ import com.zhouyu.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @ComponentScan("com.zhouyu")
 @PropertySource("spring.properties") // 引用properties文件，后续可用 @Value("$(zhouyu)")
 @EnableAspectJAutoProxy // 开启切面
+//@EnableAsync
+//@EnableTransactionManagement
 public class AppConfig {
 
 	// 测试 通过 byName 实现依赖注入
