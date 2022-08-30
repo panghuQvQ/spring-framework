@@ -1433,7 +1433,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (autowiredBeanNames != null) {
 				autowiredBeanNames.add(autowiredBeanName);
 			}
-			// 有可能筛选出来的是某个bean的类型，此处就进行实例化，调用getBean
+			// 有可能筛选出来的是某个bean的类型，比如循环依赖的情况下，此处就进行实例化，调用getBean()
 			if (instanceCandidate instanceof Class) {
 				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
 			}
