@@ -1228,8 +1228,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 一个原型BeanDefinition，会多次来创建Bean，那么就可以把该BeanDefinition所要使用的构造方法缓存起来，避免每次都进行构造方法推断
 		boolean resolved = false;
 		boolean autowireNecessary = false;
-		if (args == null) {
+		if (args == null) { // 当用户getBean("xxx",new yyy());赋值了参数(用于寻找构造方法)，则不走这一步
 			synchronized (mbd.constructorArgumentLock) {
+				// 对于原型BeanDefinition来说，会把第一次选中的构造方法缓存在这个属性里面
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
 					resolved = true;
 					// autowireNecessary表示有没有必要要进行注入，比如当前BeanDefinition用的是无参构造方法，那么autowireNecessary为false，否则为true，表示需要给构造方法参数注入值
@@ -1237,7 +1238,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				}
 			}
 		}
-		if (resolved) {
+		if (resolved) { // 判断是否有构造方法缓存
 			// 如果确定了当前BeanDefinition的构造方法，那么看是否需要进行对构造方法进行参数的依赖注入（构造方法注入）
 			if (autowireNecessary) {
 				// 方法内会拿到缓存好的构造方法的入参
@@ -1252,7 +1253,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Candidate constructors for autowiring?
 		// 提供一个扩展点，可以利用SmartInstantiationAwareBeanPostProcessor来控制用beanClass中的哪些构造方法
-		// 比如AutowiredAnnotationBeanPostProcessor会把加了@Autowired注解的构造方法找出来，具体看代码实现会更复杂一点
+		// 比如AutowiredAnnotationBeanPostProcessor会把加了@Autowired注解的构造方法找出来，具体看代码实现会更复杂一点，可进入查看代码
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 
 		// 如果推断出来了构造方法，则需要给构造方法赋值，也就是给构造方法参数赋值，也就是构造方法注入
@@ -1343,7 +1344,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		if (beanClass != null && hasInstantiationAwareBeanPostProcessors()) {
 			for (SmartInstantiationAwareBeanPostProcessor bp : getBeanPostProcessorCache().smartInstantiationAware) {
-				Constructor<?>[] ctors = bp.determineCandidateConstructors(beanClass, beanName);
+				Constructor<?>[] ctors = bp.determineCandidateConstructors(beanClass, beanName); // 可进入实现类 AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors() 中查看相关代码
 				if (ctors != null) {
 					return ctors;
 				}
@@ -1367,7 +1368,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						(PrivilegedAction<Object>) () -> getInstantiationStrategy().instantiate(mbd, beanName, this),
 						getAccessControlContext());
 			} else {
-				// 默认是CglibSubclassingInstantiationStrategy
+				// 默认是CglibSubclassingInstantiationStrategy，可进入查看
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, this);
 			}
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
