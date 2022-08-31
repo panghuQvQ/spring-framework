@@ -66,7 +66,13 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext() {
 		StartupStep createAnnotatedBeanDefReader = this.getApplicationStartup().start("spring.context.annotated-bean-reader.create");
-		// 额外会创建StandardEnvironment
+
+		/**
+		 * 这行代码，额外会创建 StandardEnvironment
+		 *
+		 * AnnotatedBeanDefinitionReader 可以直接把某个类转换为BeanDefinition，并且会解析该类上的注解
+		 * 它能解析的注解是：@Conditional，@Scope、@Lazy、@Primary、@DependsOn、@Role、@Description
+ 		 */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		createAnnotatedBeanDefReader.end();
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
@@ -167,6 +173,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		Assert.notEmpty(componentClasses, "At least one component class must be specified");
 		StartupStep registerComponentClass = this.getApplicationStartup().start("spring.context.component-classes.register")
 				.tag("classes", () -> Arrays.toString(componentClasses));
+		// 可点入 register()查看
 		this.reader.register(componentClasses);
 		registerComponentClass.end();
 	}
