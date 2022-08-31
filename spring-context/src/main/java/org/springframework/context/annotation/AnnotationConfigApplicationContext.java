@@ -68,7 +68,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		StartupStep createAnnotatedBeanDefReader = this.getApplicationStartup().start("spring.context.annotated-bean-reader.create");
 
 		/**
-		 * 这行代码，额外会创建 StandardEnvironment
+		 * 这行代码，额外会创建 StandardEnvironment 环境变量
 		 *
 		 * AnnotatedBeanDefinitionReader 可以直接把某个类转换为BeanDefinition，并且会解析该类上的注解
 		 * 它能解析的注解是：@Conditional，@Scope、@Lazy、@Primary、@DependsOn、@Role、@Description
@@ -97,6 +97,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		// 构造DefaultListableBeanFactory、AnnotatedBeanDefinitionReader、ClassPathBeanDefinitionScanner
 		this();
+		// 将 配置类，即我们传的AppConfig.class,生成BeanDefinition 存入 BeanDefinitionMap中
 		register(componentClasses);
 		refresh();
 	}
@@ -173,7 +174,12 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		Assert.notEmpty(componentClasses, "At least one component class must be specified");
 		StartupStep registerComponentClass = this.getApplicationStartup().start("spring.context.component-classes.register")
 				.tag("classes", () -> Arrays.toString(componentClasses));
-		// 可点入 register()查看
+		/**
+		 * AnnotatedBeanDefinitionReader 可以直接把某个类转换为BeanDefinition，并且会解析该类上的注解
+		 * 它能解析的注解是：@Conditional，@Scope、@Lazy、@Primary、@DependsOn、@Role、@Description
+		 *
+		 * 可点入 register()查看
+		 */
 		this.reader.register(componentClasses);
 		registerComponentClass.end();
 	}

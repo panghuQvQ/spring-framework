@@ -158,6 +158,7 @@ public abstract class AnnotationConfigUtils {
 			}
 			// 用来判断某个Bean能不能用来进行依赖注入
 			if (!(beanFactory.getAutowireCandidateResolver() instanceof ContextAnnotationAutowireCandidateResolver)) {
+				// ContextAnnotationAutowireCandidateResolver: 上下文注释 Autowire 候选解析器
 				beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());
 			}
 		}
@@ -183,6 +184,7 @@ public abstract class AnnotationConfigUtils {
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);
 			def.setSource(source);
+			// registerPostProcessor(registry, def, COMMON_ANNOTATION_PROCESSOR_BEAN_NAME): 将这个BeanDefinition注册到BeanDefinitionMap中
 			beanDefs.add(registerPostProcessor(registry, def, COMMON_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 

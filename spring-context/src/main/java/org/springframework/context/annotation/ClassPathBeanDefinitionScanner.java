@@ -158,6 +158,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		this.registry = registry;
 
 		if (useDefaultFilters) {
+			// 此方法，可进入查看，添加 includeFilters 数据，后续扫描时，就根据这个判断类是否需要生成Bean对象
 			registerDefaultFilters();
 		}
 		setEnvironment(environment);
