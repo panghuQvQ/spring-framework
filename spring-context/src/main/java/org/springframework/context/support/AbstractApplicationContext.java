@@ -914,7 +914,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected void registerListeners() {
 		// Register statically specified listeners first.
 		for (ApplicationListener<?> listener : getApplicationListeners()) {
-			getApplicationEventMulticaster().addApplicationListener(listener);
+			getApplicationEventMulticaster().addApplicationListener(listener); // 将applicationContext中的事件监听器，添加至事件发布器中
 		}
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans

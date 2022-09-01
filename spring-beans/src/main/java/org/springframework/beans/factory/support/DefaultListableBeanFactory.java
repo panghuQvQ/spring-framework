@@ -977,8 +977,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		// 所有的非懒加载单例Bean都创建完了后
 		// Trigger post-initialization callback for all applicable beans...
 		for (String beanName : beanNames) {
-			Object singletonInstance = getSingleton(beanName);
-			if (singletonInstance instanceof SmartInitializingSingleton) {
+			Object singletonInstance = getSingleton(beanName); // 从单例池中获取Bean对象
+			if (singletonInstance instanceof SmartInitializingSingleton) { // 判断当前 Bean对象是否实现了 SmartInitializingSingleton
 				StartupStep smartInitialize = this.getApplicationStartup().start("spring.beans.smart-initialize")
 						.tag("beanName", beanName);
 				SmartInitializingSingleton smartSingleton = (SmartInitializingSingleton) singletonInstance;
@@ -989,7 +989,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}, getAccessControlContext());
 				}
 				else {
-					smartSingleton.afterSingletonsInstantiated();
+					smartSingleton.afterSingletonsInstantiated(); // 调用此方法
 				}
 				smartInitialize.end();
 			}
