@@ -96,7 +96,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		// 构造DefaultListableBeanFactory、AnnotatedBeanDefinitionReader、ClassPathBeanDefinitionScanner
-		this();
+		this(); // 先调用父类 GenericApplicationContext的无参构造，用以生成beanFactory。然后调用当前类的无参构造方法
 		// 将 配置类，即我们传的AppConfig.class,生成BeanDefinition 存入 BeanDefinitionMap中
 		register(componentClasses);
 		refresh();

@@ -3,7 +3,9 @@ package com.zhouyu;
 
 import com.zhouyu.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -20,6 +22,14 @@ public class AppConfig {
 	@Bean(autowire = Autowire.BY_NAME)
 	public StudentService studentService(){
 		return new StudentService();
+	}
+
+	// 国际化对象
+	@Bean
+	public MessageSource messageSource(){
+		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+		messageSource.setBasename("message");
+		return messageSource;
 	}
 
 //	@Bean
