@@ -1,7 +1,9 @@
 package com.zhouyu.service;
 
 
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +17,16 @@ public class UserService {
 
 		System.out.println("test");
 	}
+
+	/**
+	 * 事件监听器，实现二：
+	 * @EventListener
+	 * @param applicationEvent
+	 */
+//	@EventListener
+//	public void listener(ApplicationEvent applicationEvent){
+//		System.out.println(applicationEvent);
+//	}
 
 
 }
