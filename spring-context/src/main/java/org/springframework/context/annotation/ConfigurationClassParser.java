@@ -179,6 +179,7 @@ class ConfigurationClassParser {
 					parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
 				}
 				else {
+					// 点入查看
 					parse(bd.getBeanClassName(), holder.getBeanName());
 				}
 			}
@@ -198,7 +199,8 @@ class ConfigurationClassParser {
 
 	protected final void parse(@Nullable String className, String beanName) throws IOException {
 		Assert.notNull(className, "No bean class name for configuration class bean definition");
-		MetadataReader reader = this.metadataReaderFactory.getMetadataReader(className);
+		MetadataReader reader = this.metadataReaderFactory.getMetadataReader(className); // 获取注解元数据的信息
+		// 点入查看
 		processConfigurationClass(new ConfigurationClass(reader, beanName), DEFAULT_EXCLUSION_FILTER);
 	}
 
@@ -255,6 +257,10 @@ class ConfigurationClassParser {
 		// Recursively process the configuration class and its superclass hierarchy.
 		SourceClass sourceClass = asSourceClass(configClass, filter);
 		do {
+			/**
+			 * 真正解析配置类的方法，可进入查看
+			 * 此时循环，是防止配置类有父类，而查询父类信息
+ 			 */
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
 		}
 		while (sourceClass != null);
@@ -304,7 +310,9 @@ class ConfigurationClassParser {
 				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
 			for (AnnotationAttributes componentScan : componentScans) {
 				// The config class is annotated with @ComponentScan -> perform the scan immediately
-				// 这里就会进行扫描，得到的BeanDefinition会注册到Spring容器中
+				/**
+				 * 这里就会进行扫描，得到的BeanDefinition会注册到Spring容器中，点进查看
+ 				 */
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
 				// Check the set of scanned definitions for any further config classes and parse recursively if needed
@@ -313,7 +321,7 @@ class ConfigurationClassParser {
 					if (bdCand == null) {
 						bdCand = holder.getBeanDefinition();
 					}
-					// 检查扫描出来的BeanDefinition是不是配置类（full和lite）
+					// 检查扫描出来的BeanDefinition是不是配置类（full和lite），如果是配置类，则对配置类进行解析
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
 						parse(bdCand.getBeanClassName(), holder.getBeanName());
 					}

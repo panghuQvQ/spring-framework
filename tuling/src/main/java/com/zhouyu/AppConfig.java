@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAspectJAutoProxy // 开启切面
 //@EnableAsync
 //@EnableTransactionManagement
+//@Configuration(proxyBeanMethods = false) // 默认为true
 public class AppConfig {
 
 	// 测试 通过 byName 实现依赖注入

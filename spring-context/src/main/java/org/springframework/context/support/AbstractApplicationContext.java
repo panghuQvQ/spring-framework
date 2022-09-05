@@ -792,7 +792,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 
 		/**
-		 * 重点
+		 * 重点，进入查看
 		 * getBeanFactoryPostProcessors()，获取到的是在 refresh()之前，通过 applicationContext.addBeanFactoryPostProcessor(new CeshiBeanFactoryPostProcessor()); 添加的后置处理器
 		 * 如果没有添加，默认为 null
  		 */
