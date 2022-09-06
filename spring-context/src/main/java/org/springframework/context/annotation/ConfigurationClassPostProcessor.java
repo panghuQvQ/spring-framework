@@ -346,7 +346,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			parser.parse(candidates);  // AppConfig.class--->BeanDefinition
 			parser.validate();
 
-			// configClasses相当于就是解析之后的结果
+			// configClasses相当于就是解析之后的结果，所有的配置类
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 			configClasses.removeAll(alreadyParsed);
 
@@ -357,7 +357,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
 			// 把所有的ConfigurationClass加载成BeanDefinition，通过情况下一个配置类会对应一个BeanDefinition,不过也有可能一个配置类对应多个BeanDefinition
-			// 比如一个配置类中有多个@Bean，一个配置配置了@ImportResource
+			// 比如一个配置类中有多个@Bean，一个配置配置了@ImportResource，生成BeanDefinition
 			this.reader.loadBeanDefinitions(configClasses);
 
 			alreadyParsed.addAll(configClasses);
