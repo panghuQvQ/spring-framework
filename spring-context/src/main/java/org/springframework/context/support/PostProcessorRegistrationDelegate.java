@@ -113,7 +113,10 @@ final class PostProcessorRegistrationDelegate {
 			// 执行扫描出来的BeanDefinitionRegistryPostProcessor
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
-			// 默认情况下获取 ConfigurationClassPostProcessor 的 BeanDefinition，在 创建 AnnotatedBeanDefinitionReader时，往BeanFactory中添加的
+			/**
+			 * 从BeanFactory 中找出与BeanDefinitionRegistryPostProcessor对应的 beanName
+			 * 默认情况下获取 ConfigurationClassPostProcessor 的 BeanDefinition的naem -->在创建 AnnotatedBeanDefinitionReader时，往BeanFactory中添加的
+ 			 */
 			String[] postProcessorNames =
 					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
@@ -126,7 +129,8 @@ final class PostProcessorRegistrationDelegate {
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
 			/**
-			 * 调用 ConfigurationClassPostProcessor
+			 * 调用 ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry()方法
+			 * 此方法会解析出哪一个是配置类，此时情况会找出AppConfig.java这个配置类 ---> 内部调用 ConfigurationClassParser的 parse() ---> doScan() 扫描
 			 * 进入查看
 			 */
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry, beanFactory.getApplicationStartup());

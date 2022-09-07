@@ -280,7 +280,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 */
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
-		String[] candidateNames = registry.getBeanDefinitionNames(); // 获取最初设置的 BeanDefinition( 包括 Appconfig 这个BeanDefinition) 的名字
+		String[] candidateNames = registry.getBeanDefinitionNames(); // 获取最初设置的 BeanDefinition( 包括 Appconfig 这个BeanDefinition) 的名字集合
 
 		for (String beanName : candidateNames) {
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);

@@ -173,13 +173,13 @@ class ConfigurationClassParser {
 			try {
 				// 解析BeanDefinition所对应的类
 				if (bd instanceof AnnotatedBeanDefinition) {
+					// 点入查看
 					parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
 				}
 				else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
 					parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
 				}
 				else {
-					// 点入查看
 					parse(bd.getBeanClassName(), holder.getBeanName());
 				}
 			}
@@ -311,7 +311,7 @@ class ConfigurationClassParser {
 			for (AnnotationAttributes componentScan : componentScans) {
 				// The config class is annotated with @ComponentScan -> perform the scan immediately
 				/**
-				 * 这里就会进行扫描，得到的BeanDefinition会注册到Spring容器中，点进查看
+				 * 内部调用 scanner.doScan() 进行扫描，得到的BeanDefinition会注册到Spring容器中，点进查看
  				 */
 				Set<BeanDefinitionHolder> scannedBeanDefinitions =
 						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
