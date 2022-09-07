@@ -437,12 +437,12 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 					try {
 						// MetadataReader表示类的元数据读取器,默认实现类为SimpleMetadataReader.
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
-						// excludeFilters、includeFilters判断
+						// excludeFilters、includeFilters判断,点进查看
 						if (isCandidateComponent(metadataReader)) { // @Component-->includeFilters判断
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setSource(resource);
 
-							// 判断当前BeanDefinition的类信息,是否为接口,抽象类
+							// 判断当前BeanDefinition的类信息,是否为接口,抽象类，点进查看
 							if (isCandidateComponent(sbd)) {
 								if (debugEnabled) {
 									logger.debug("Identified candidate component class: " + resource);
