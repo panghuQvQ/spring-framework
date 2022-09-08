@@ -21,13 +21,13 @@ public class AppConfig {
 
 	// 测试 通过 byName 实现依赖注入
 	@Bean(autowire = Autowire.BY_NAME)
-	public StudentService studentService(){
+	public StudentService studentService() {
 		return new StudentService();
 	}
 
 	// 国际化对象
 	@Bean
-	public MessageSource messageSource(){
+	public MessageSource messageSource() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
 		messageSource.setBasename("message");
 		return messageSource;
