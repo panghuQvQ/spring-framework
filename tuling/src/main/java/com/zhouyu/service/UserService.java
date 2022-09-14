@@ -18,6 +18,11 @@ public class UserService {
 		System.out.println("test");
 	}
 
+	public void a() {
+
+		System.out.println("a");
+	}
+
 	/**
 	 * 事件监听器，实现二：
 	 * @EventListener

@@ -54,7 +54,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
-		// 从ProxyFactory中拿到所设置的Advice（添加时被封装成了DefaultPointcutAdvisor）
+		// 从ProxyFactory中拿到所有设置的Advice（添加时被封装成了DefaultPointcutAdvisor）
 		// 添加的时候会控制顺序
 		Advisor[] advisors = config.getAdvisors();
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
@@ -82,7 +82,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					}
 
 					if (match) {
-						// 如果匹配则将Advisor封装成为Interceptor，当前Advisor中的Advice可能即是MethodBeforeAdvice，也是ThrowsAdvice
+						// 如果匹配则将Advisor封装成为Interceptor，当前Advisor中的Advice可能即是MethodBeforeAdvice，也是ThrowsAdvice，可进入查看代码
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method
