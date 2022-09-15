@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @ComponentScan("com.zhouyu")
 @PropertySource("spring.properties") // 引用properties文件，后续可用 @Value("$(zhouyu)")
-@EnableAspectJAutoProxy // 开启切面
+@EnableAspectJAutoProxy // 开启切面， 会注册一个 AnnotationAwareAspectJAutoProxyCreator 的PostProcessor
 //@EnableAsync
 //@EnableTransactionManagement
 //@Configuration(proxyBeanMethods = false) // 默认为true

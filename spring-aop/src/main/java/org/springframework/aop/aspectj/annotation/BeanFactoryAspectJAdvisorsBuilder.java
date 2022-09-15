@@ -117,7 +117,9 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-								// 利用BeanFactoryAspectInstanceFactory来解析Aspect类
+								/**
+								 * 利用BeanFactoryAspectInstanceFactory来解析Aspect类，将其中的方法解析为 Advisor，可进入查看
+								 */
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
 									// 缓存切面所对应的所有Advisor对象

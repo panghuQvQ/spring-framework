@@ -298,6 +298,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			// 意味着之前尚未做过三级缓存中的 lambda表达式方法
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+				// 点进查看代码
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -350,8 +351,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		// Create proxy if we have advice.
-		// 判断当前bean是否存在匹配的advice，如果存在则要生成一个代理对象
-		// 此处根据类以及类中的方法去匹配到Interceptor（也就是Advice），然后生成代理对象，代理对象在执行的时候，还会根据当前执行的方法去匹配
+		/**
+		 * 判断当前bean是否存在匹配的advice，如果存在则要生成一个代理对象
+		 * 此处根据类以及类中的方法去匹配到Interceptor（也就是Advice），然后生成代理对象，代理对象在执行的时候，还会根据当前执行的方法去匹配
+		 * 可进入方法查看 AbstractAdvisorAutoProxyCreator.getAdvicesAndAdvisorsForBean()
+ 		 */
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			// advisedBeans记录了某个Bean已经进行过AOP了
