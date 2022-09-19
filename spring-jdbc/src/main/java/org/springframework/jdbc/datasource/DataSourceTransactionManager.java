@@ -242,9 +242,10 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	protected Object doGetTransaction() {
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		// 从 ThreadLocal中获取连接对象，可能为 null
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
-		txObject.setConnectionHolder(conHolder, false);
+		txObject.setConnectionHolder(conHolder, false); // 表示，数据源事务对象的 连接holder 不是新建的
 		return txObject;
 	}
 

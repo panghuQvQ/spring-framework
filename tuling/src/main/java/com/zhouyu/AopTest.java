@@ -22,6 +22,38 @@ public class AopTest {
 
 	private static UserService userService;
 
+	/**
+	 * AOP 总结：
+	 *  Advisor
+	 * 		Pointcut
+	 * 			ClassFilter
+	 * 			MethodMatcher
+	 * 		Advice---> Method拦截器(方法前，方法后，异常后。。。)
+	 *  UserService --> 找到所有匹配的Advisor --> 利用ProxyFactory 生成代理对象
+	 *  代理对象执行某个方法时 --> 依据当前调用的方法 --> 找到所匹配的Advisor --> 并执行对应的Advice逻辑
+	 *===============================================================================================
+	 *
+	 * Spring 事务总结：
+	 *	test()
+	 *	Spring 事务管理器，创建数据库连接 conn
+	 *	conn.autocommit = false;
+	 *	conn.隔离级别
+	 *	conn放入ThreadLocal<Map> ==> DataSource,conn 连接
+	 *	target.test() sql1,sql2
+	 *		a()
+	 *			挂起---> 挂起对象.conn连接
+	 *			Spring 事务管理器，创建数据库连接 conn1
+	 * 	  		conn1.autocommit = false;
+	 * 	  		conn1.隔离级别
+	 * 	  		conn1放入ThreadLocal<Map> DataSource,conn1 连接
+	 * 	  		sql
+	 * 	  		conn1.提交
+	 * 	  		恢复---> 挂起对象.conn连接---> ThreadLocal<Map>
+	 * 	  		rollback()---> true---> ThreadLocal true
+	 * 	  	sql3
+	 * 	提交---> commit()--->ThreadLocal true---> 回滚
+	 *
+	 */
 	public static void main(String[] args) {
 
 

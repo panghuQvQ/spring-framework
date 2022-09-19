@@ -345,18 +345,20 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		// Use defaults if no transaction definition given.
 		TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
 
-		// 得到一个新的DataSourceTransactionObject对象
+		// 得到一个新的DataSourceTransactionObject 数据源事务对象
 		// new DataSourceTransactionObject  txObject
 		Object transaction = doGetTransaction();
 		boolean debugEnabled = logger.isDebugEnabled();
 
 		// transaction.getConnectionHolder().isTransactionActive()
+		// 判断是否开启了一个事务(判断数据库连接对象ConnectionHolder数据)，查看 DataSourceTransactionManager.isExistingTransaction()
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(def, transaction, debugEnabled);
 		}
 
 		// Check definition settings for new transaction.
+		// 判断@Transactional(timeout = 1) ,是否设置timeout属性，并且是否小于 -1
 		if (def.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", def.getTimeout());
 		}
@@ -366,7 +368,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
 		}
-		// 在当前Thread中没有事务的前提下，以下三个是等价的
+		// 在当前Thread中没有事务的前提下，以下三个是等价的 (默认传播机制：Propagation.REQUIRED)
 		else if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
 				def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
 				def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
@@ -378,7 +380,8 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 			try {
 				// 开启事务后，transaction中就会有数据库连接了，并且isTransactionActive为true
-				// 并返回TransactionStatus对象，该对象保存了很多信息，包括被挂起的资源
+				// 并返回TransactionStatus对象，该对象保存了很多信息，包括被挂起的资源，
+				// 可进入查看
 				return startTransaction(def, transaction, debugEnabled, suspendedResources);
 			}
 			catch (RuntimeException | Error ex) {
@@ -411,7 +414,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		DefaultTransactionStatus status = newTransactionStatus(
 				definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
 
-		// 开启事务
+		// 开启事务，可进入查看	DataSourceTransactionManager.doBegin()
 		doBegin(transaction, definition);
 
 		// 如果需要新开一个TransactionSynchronization，就把新创建的事务的一些状态信息设置到TransactionSynchronizationManager中
@@ -426,11 +429,13 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			TransactionDefinition definition, Object transaction, boolean debugEnabled)
 			throws TransactionException {
 
+		// PROPAGATION_NEVER 表示之前的方法不能有事务
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NEVER) {
 			throw new IllegalTransactionStateException(
 					"Existing transaction found for transaction marked with propagation 'never'");
 		}
 
+		//
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NOT_SUPPORTED) {
 			if (debugEnabled) {
 				logger.debug("Suspending current transaction");
@@ -447,9 +452,9 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				logger.debug("Suspending current transaction, creating new transaction with name [" +
 						definition.getName() + "]");
 			}
-			SuspendedResourcesHolder suspendedResources = suspend(transaction);
+			SuspendedResourcesHolder suspendedResources = suspend(transaction); // 先挂起
 			try {
-				return startTransaction(definition, transaction, debugEnabled, suspendedResources);
+				return startTransaction(definition, transaction, debugEnabled, suspendedResources); // 开启新事物
 			}
 			catch (RuntimeException | Error beginEx) {
 				resumeAfterBeginException(transaction, suspendedResources, beginEx);
@@ -612,6 +617,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 				// 将当前线程中的数据库连接对象、TransactionSynchronization对象、TransactionSynchronizationManager中的设置构造成一个对象
 				// 表示被挂起的资源持有对象，持有了当前线程中的事务对象、TransactionSynchronization对象
+				// 挂起资源对象(数据库连接资源，同步器，事务名字，事务是不是readOnly，隔离级别，有事务开启的话默认为true)
 				return new SuspendedResourcesHolder(
 						suspendedResources, suspendedSynchronizations, name, readOnly, isolationLevel, wasActive);
 			}

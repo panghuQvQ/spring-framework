@@ -7,15 +7,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @ComponentScan("com.zhouyu")
 @PropertySource("spring.properties") // 引用properties文件，后续可用 @Value("$(zhouyu)")
 @EnableAspectJAutoProxy // 开启切面， 会注册一个 AnnotationAwareAspectJAutoProxyCreator 的PostProcessor
 //@EnableAsync
-//@EnableTransactionManagement
+@EnableTransactionManagement
 //@Configuration(proxyBeanMethods = false) // 默认为true
 public class AppConfig {
 
@@ -43,6 +45,11 @@ public class AppConfig {
 //	public PlatformTransactionManager transactionManager() {
 //		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 //		transactionManager.setDataSource(dataSource());
+//		/**
+//		 * 默认为true，表示有一个失败的sql就回滚
+//		 * 设置为false，表示即使部分失败都不会回滚，sql全都执行成功
+// 		 */
+//		transactionManager.setGlobalRollbackOnParticipationFailure(false);
 //		return transactionManager;
 //	}
 //
