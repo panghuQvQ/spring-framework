@@ -78,7 +78,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 		// 寻找匹配的Advisor，点进查看
 		List<Advisor> advisors = findEligibleAdvisors(beanClass, beanName);
 		if (advisors.isEmpty()) {
-			return DO_NOT_PROXY;
+			return DO_NOT_PROXY; // null
 		}
 		return advisors.toArray();
 	}

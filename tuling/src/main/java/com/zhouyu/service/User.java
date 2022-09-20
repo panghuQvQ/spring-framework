@@ -1,6 +1,11 @@
 package com.zhouyu.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 /**
  * @author admin
@@ -12,8 +17,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class User {
 
-	public void test() {
+	@Autowired
+	User user;
 
-		System.out.println("user");
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Transactional
+	public String test() {
+		jdbcTemplate.execute("insert into student values(4,'小王','男')");
+
+		try {
+			user.test1();
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly(); // 强制回滚
+			return "新增失败";
+		}
+		return "新增成功";
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void test1() {
+		jdbcTemplate.execute("insert into student values(5,'小花','女')");
+		int result = 100 / 0;
 	}
 }

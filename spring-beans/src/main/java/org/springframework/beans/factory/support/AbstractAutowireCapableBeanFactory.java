@@ -1881,12 +1881,21 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object wrappedBean = bean;
 
-		// 初始化前, @PostConstract
+		/**
+		 * 初始化前(两种情况触发):
+		 * 1.当前Bean对象的方法上存在 @PostConstract 注解
+		 * 2.自定义实现了 BeanPostProcessor.postProcessBeforeInitialization()
+ 		 */
+
 		if (mbd == null || !mbd.isSynthetic()) {
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
-		// 初始化
+		/**
+		 * 初始化(两种情况触发):
+		 * 1.查看当前Bean对象是否实现了InitializingBean接口，如果实现了就调用其afterPropertiesSet()方法
+		 * 2.执行BeanDefinition中指定的初始化方法
+ 		 */
 		try {
 			invokeInitMethods(beanName, wrappedBean, mbd);
 		} catch (Throwable ex) {
@@ -1895,7 +1904,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					beanName, "Invocation of init method failed", ex);
 		}
 
-		// 初始化后
+		/**
+		 * 初始化后(多种情况触发):
+		 * 1.自定义实现了 BeanPostProcessor.postProcessAfterInitialization()
+		 * 2.AOP，查看 AbstractAutoProxyCreator.postProcessAfterInitialization 方法
+		 * 3.事务
+		 * 等等
+ 		 */
+
 		if (mbd == null || !mbd.isSynthetic()) {
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}

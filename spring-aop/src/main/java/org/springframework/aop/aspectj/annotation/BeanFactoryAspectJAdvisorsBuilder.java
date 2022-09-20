@@ -86,6 +86,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		// aspectBeanNames是用来缓存BeanFactory中所存在的切面beanName的，第一次为null，后面就不为null了，不为null表示之前就已经找到过BeanFactory中的切面了
 		List<String> aspectNames = this.aspectBeanNames;
 
+		// 如果缓存里面没有切面数据，则在这一步中遍历所有Beannames，判断是否是切面Bean，如果是，则解析其中的方法，生成advisor，并存入缓存中
 		if (aspectNames == null) {
 			synchronized (this) {
 				aspectNames = this.aspectBeanNames;

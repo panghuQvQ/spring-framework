@@ -1,7 +1,9 @@
 package com.zhouyu;
 
 import com.zhouyu.postProcessor.CeshiBeanFactoryPostProcessor;
+import com.zhouyu.service.AService;
 import com.zhouyu.service.StudentService;
+import com.zhouyu.service.User;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -23,10 +25,14 @@ public class Test {
 
 		applicationContext.publishEvent("123"); // 如果没设置，则用默认的事件发布器：SimpleApplicationEventMulticaster，发布事件
 
-//		UserService userService = (UserService) applicationContext.getBean("userService");
-//		userService.test();
+//		AService AService = (AService) applicationContext.getBean("AService");
+//		AService.test();
 
-		System.out.println(applicationContext.getBean("teacherController"));
+		User user = (User) applicationContext.getBean("user");
+		String test = user.test();
+		System.out.println(test);
+
+//		System.out.println(applicationContext.getBean("teacherController"));
 //		System.out.println(applicationContext.getBean("&person"));
 
 //		applicationContext.close();
