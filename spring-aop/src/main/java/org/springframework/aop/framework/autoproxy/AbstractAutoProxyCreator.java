@@ -339,7 +339,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			return bean;
 		}
 
-		// advisedBeans表示已经判断过了的bean，false表示此bean不需要进行Aop
+		// advisedBeans表示已经判断过了的bean，false表示此bean不需要进行Aop，如下一个判断就做了这个
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
