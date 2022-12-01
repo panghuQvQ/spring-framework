@@ -12,6 +12,7 @@ public class TestAspect {
 	@Before("execution(public void com.zhouyu.service.UserService.a())")
 	public void userServiceAMethodBefore(JoinPoint joinPoint) {
 		System.out.println("userServiceBefore");
+//		throw new RuntimeException("失败");
 	}
 
 }
