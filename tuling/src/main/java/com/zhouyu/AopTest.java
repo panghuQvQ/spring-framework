@@ -59,18 +59,22 @@ public class AopTest {
 
 		UserService target = new UserService();
 
-		/*// 通过cglib技术实现动态代理
+/*		// 通过cglib技术实现动态代理
 		Enhancer enhancer = new Enhancer();
 		enhancer.setSuperclass(UserService.class);
 
 		// 定义额外逻辑，也就是代理逻辑
 		enhancer.setCallbacks(new Callback[]{new MethodInterceptor() {
+			// 代理对象，要执行的方法，执行参数，
 			@Override
 			public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
 
-				System.out.println("before...");
 
+				System.out.println("before...");
+				// 执行被代理的方法，目标对象
 				Object result = methodProxy.invoke(target, objects);
+//				Object result = method.invoke(target, objects);
+//				Object result = methodProxy.invokeSuper(o, objects); // 执行被代理类的父类的方法
 				System.out.println("after...");
 				return result;
 			}
@@ -88,11 +92,11 @@ public class AopTest {
 			}
 		});
 
-		// 动态代理所创建出来的UserService 对象
+		// 动态代理所创建出来的UserService 代理对象
 		UserService userService = (UserService) enhancer.create();
 
 		// 执行这个userService的test方法时，就会额外汇之星一些其他逻辑
-		userService.a();*/
+		userService.test();*/
 
 		ProxyFactory proxyFactory = new ProxyFactory();
 		proxyFactory.setTarget(target);
