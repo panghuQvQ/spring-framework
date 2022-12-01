@@ -4,6 +4,7 @@ import com.zhouyu.postProcessor.CeshiBeanFactoryPostProcessor;
 import com.zhouyu.service.AService;
 import com.zhouyu.service.StudentService;
 import com.zhouyu.service.User;
+import com.zhouyu.service.UserService;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -28,12 +29,16 @@ public class Test {
 //		AService AService = (AService) applicationContext.getBean("AService");
 //		AService.test();
 
+		UserService userService = (UserService) applicationContext.getBean("userService");
+		userService.a();
+
 		User user = (User) applicationContext.getBean("user");
-		String test = user.test();
-		System.out.println(test);
+//		String test = user.test();
+//		System.out.println(test);
 
 //		System.out.println(applicationContext.getBean("teacherController"));
-//		System.out.println(applicationContext.getBean("&person"));
+		System.out.println(applicationContext.getBean("&person"));
+		System.out.println(applicationContext.getBean("person"));
 
 //		applicationContext.close();
 	}
