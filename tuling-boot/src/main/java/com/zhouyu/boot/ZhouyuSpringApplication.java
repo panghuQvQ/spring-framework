@@ -10,6 +10,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import java.util.Map;
+
 public class ZhouyuSpringApplication {
 
 	public static ConfigurableApplicationContext run(Class config) {
@@ -17,11 +19,33 @@ public class ZhouyuSpringApplication {
 		applicationContext.register(config);
 		applicationContext.refresh();
 
-		// pom.xml  @Conditional
-		startTomcat(applicationContext);
+		// pom.xml  @Conditional 启动一个tomcat
+//		startTomcat(applicationContext);
 
+		// 假如需要除 Tomcat 以外的服务器，如 Jetty、Undertow
+		WebServer webServer = getWebServer(applicationContext);
+		webServer.start();
 		return applicationContext;
 
+	}
+
+	private static WebServer getWebServer(AnnotationConfigWebApplicationContext applicationContext) {
+
+//		WebServer webServer = applicationContext.getBean(WebServer.class);
+
+		//key 为beanName， value 为Bean对象
+		Map<String, WebServer> webServers = applicationContext.getBeansOfType(WebServer.class);
+		if(webServers.isEmpty()){
+			throw new NullPointerException("未配置服务器");
+		}
+		if(webServers.size()>1){
+			try {
+				throw new IllegalAccessException("拿到了多个服务器");
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return webServers.values().stream().findFirst().get();
 	}
 
 	private static Tomcat startTomcat(AnnotationConfigWebApplicationContext applicationContext) {
@@ -71,4 +95,6 @@ public class ZhouyuSpringApplication {
 
 		return tomcat;
 	}
+
+
 }
