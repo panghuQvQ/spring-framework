@@ -17,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.sql.DataSource;
 
 
-@ComponentScan("com.zhouyu")
+//@ComponentScan("com.zhouyu")
+@ComponentScan()
 @PropertySource("spring.properties") // 引用properties文件，后续可用 @Value("$(zhouyu)")
 @EnableAspectJAutoProxy // 开启切面， 会注册一个 AnnotationAwareAspectJAutoProxyCreator 的PostProcessor
 //@EnableAsync
